@@ -4,4 +4,6 @@
     <string name="monitor_disabled">Monitoring is suspended</string>
     <string name="monitor_enabled">Monitor is running</string>
     <string name="home_title">Home</string>
+    <string name="media_permission_rationale">Permissions must be granted to access media files.</string>
+    <string name="media_permission_rationale_label">SETTING</string>
 </resources>

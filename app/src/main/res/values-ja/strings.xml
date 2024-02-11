@@ -5,4 +5,6 @@
     <string name="monitor_disabled">監視停止中です</string>
     <string name="monitor_enabled">モニター中です</string>
     <string name="home_title">ホーム</string>
+    <string name="media_permission_rationale">メディアファイルにアクセスするためには権限を許可していただく必要があります。</string>
+    <string name="media_permission_rationale_label">設定</string>
 </resources>
