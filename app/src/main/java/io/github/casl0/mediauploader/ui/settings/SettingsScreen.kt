@@ -14,13 +14,14 @@ import io.github.casl0.mediauploader.R
 
 @Composable
 internal fun SettingsScreen(
+    onClickMediaPermission: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = onClickMediaPermission,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
@@ -36,6 +37,6 @@ internal fun SettingsScreen(
 @Composable
 private fun SettingsScreenPreview() {
     MaterialTheme {
-        SettingsScreen()
+        SettingsScreen({})
     }
 }
