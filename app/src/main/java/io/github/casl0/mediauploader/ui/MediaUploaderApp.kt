@@ -42,6 +42,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.casl0.mediauploader.CommonUiState
 import io.github.casl0.mediauploader.R
+import io.github.casl0.mediauploader.ui.settings.SettingsScreen
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -83,7 +84,9 @@ internal fun MediaUploaderApp(
                 title = currentScreen.title,
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() },
-                navigateTo = { /* TODO */ },
+                navigateTo = { route ->
+                    navController.navigate(route)
+                },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -100,6 +103,9 @@ internal fun MediaUploaderApp(
                 // TODO: implement
                 Text(text = "Home")
             }
+            composable(route = MediaUploaderRoute.Settings.name) {
+                SettingsScreen(onClickRationaleAction)
+            }
         }
     }
 }
@@ -110,7 +116,7 @@ private fun MediaUploaderAppBar(
     @StringRes title: Int,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
-    navigateTo: (CharSequence) -> Unit,
+    navigateTo: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var menuExpanded by remember {
@@ -145,7 +151,10 @@ private fun MediaUploaderAppBar(
             ) {
                 DropdownMenuItem(
                     text = { Text(text = stringResource(R.string.more_actions_settings)) },
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        menuExpanded = false
+                        navigateTo(MediaUploaderRoute.Settings.name)
+                    },
                     modifier = Modifier.width(150.dp)
                 )
             }
