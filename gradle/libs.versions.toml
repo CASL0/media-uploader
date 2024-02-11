@@ -5,6 +5,7 @@ core-ktx = "1.12.0"
 compose-bom = "2024.02.00"
 junit = "4.13.2"
 lifecycle-runtime-ktx = "2.7.0"
+navigation-compose = "2.7.7"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -18,6 +19,7 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 junit = { module = "junit:junit", version.ref = "junit" }
 
 [bundles]
@@ -25,7 +27,8 @@ androidx-compose = [
     "androidx-compose-ui",
     "androidx-compose-graphics",
     "androidx-compose-ui-tooling-preview",
-    "androidx-compose-material3"
+    "androidx-compose-material3",
+    "androidx-navigation-compose",
 ]
 
 [plugins]
