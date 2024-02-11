@@ -8,4 +8,5 @@
     <string name="media_permission_rationale">メディアファイルにアクセスするためには権限を許可していただく必要があります。</string>
     <string name="media_permission_rationale_label">設定</string>
     <string name="more_actions_settings">設定</string>
+    <string name="settings_media_permissions">メディア権限</string>
 </resources>
