@@ -12,4 +12,5 @@ internal enum class MediaUploaderRoute(
     @StringRes val title: Int,
 ) {
     Home(R.string.home_title),
+    Settings(R.string.more_actions_settings),
 }
