@@ -42,7 +42,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MediaUploaderTheme {
-                MediaUploaderApp(uiState, this::rationaleAction)
+                MediaUploaderApp(
+                    uiState,
+                    this::rationaleAction,
+                    switchObserve = { enabled ->
+                        if (enabled) {
+                            mediaMonitorService?.start()
+
+                        } else {
+                            mediaMonitorService?.stop()
+                        }
+                        _uiState.update { it.copy(observeEnabled = enabled) }
+                    }
+                )
             }
         }
         bindService()
@@ -144,9 +156,11 @@ private const val TAG = "MainActivity"
  * @property showSnackbar スナックバーを表示中
  * @property snackbarMessage スナックバーのメッセージ
  * @property snackbarActionLabel スナックバーのアクションラベル
+ * @property observeEnabled 監視の有効・無効
  */
 internal data class CommonUiState(
     val showSnackbar: Boolean = false,
     @StringRes val snackbarMessage: Int = 0,
     @StringRes val snackbarActionLabel: Int = 0,
+    val observeEnabled: Boolean = false,
 )

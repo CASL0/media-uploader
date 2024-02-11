@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.StateFlow
 internal fun MediaUploaderApp(
     uiState: StateFlow<CommonUiState>,
     onClickRationaleAction: () -> Unit,
+    switchObserve: (Boolean) -> Unit,
     navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -104,7 +105,7 @@ internal fun MediaUploaderApp(
                 Text(text = "Home")
             }
             composable(route = MediaUploaderRoute.Settings.name) {
-                SettingsScreen(onClickRationaleAction)
+                SettingsScreen(commonUiState.observeEnabled, switchObserve, onClickRationaleAction)
             }
         }
     }
