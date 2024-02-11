@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Media Uploader</string>
+    <string name="service_channel_name">Media Monitoring Status</string>
+    <string name="monitor_disabled">Monitoring is suspended</string>
+    <string name="monitor_enabled">Monitor is running</string>
 </resources>
