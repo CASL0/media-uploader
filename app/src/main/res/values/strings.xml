@@ -3,4 +3,5 @@
     <string name="service_channel_name">Media Monitoring Status</string>
     <string name="monitor_disabled">Monitoring is suspended</string>
     <string name="monitor_enabled">Monitor is running</string>
+    <string name="home_title">Home</string>
 </resources>

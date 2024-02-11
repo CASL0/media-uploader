@@ -4,4 +4,5 @@
     <string name="service_channel_name">メディア監視の状態</string>
     <string name="monitor_disabled">監視停止中です</string>
     <string name="monitor_enabled">モニター中です</string>
+    <string name="home_title">ホーム</string>
 </resources>
