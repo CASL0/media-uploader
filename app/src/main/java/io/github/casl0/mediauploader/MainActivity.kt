@@ -3,6 +3,7 @@ package io.github.casl0.mediauploader
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -58,7 +59,13 @@ class MainActivity : ComponentActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             MEDIA_PERMISSION_REQUEST_CODE -> {
-                // TODO: implement
+                if (
+                    grantResults.any {
+                        it == PackageManager.PERMISSION_DENIED
+                    }
+                ) {
+                    Log.d(TAG, "メディアパーミッションが拒否されました。")
+                }
             }
         }
     }
