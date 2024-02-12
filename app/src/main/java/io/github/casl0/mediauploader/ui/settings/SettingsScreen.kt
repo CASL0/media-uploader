@@ -22,6 +22,7 @@ internal fun SettingsScreen(
     observeEnabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     onClickMediaPermission: () -> Unit,
+    onClickNotificationPermission: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -38,6 +39,16 @@ internal fun SettingsScreen(
         ) {
             Text(
                 text = stringResource(R.string.settings_media_permissions),
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        TextButton(
+            onClick = onClickNotificationPermission,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_notification),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 modifier = Modifier.weight(1f)
             )
@@ -67,6 +78,6 @@ private fun MediaObserverSwitch(
 @Composable
 private fun SettingsScreenPreview() {
     MaterialTheme {
-        SettingsScreen(false, {}, {})
+        SettingsScreen(false, {}, {}, {})
     }
 }
