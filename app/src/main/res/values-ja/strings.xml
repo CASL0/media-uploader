@@ -10,4 +10,5 @@
     <string name="more_actions_settings">設定</string>
     <string name="settings_media_permissions">メディア権限</string>
     <string name="switch_monitor">監視の開始・終了</string>
+    <string name="settings_notification">通知</string>
 </resources>
