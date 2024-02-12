@@ -1,5 +1,6 @@
 package io.github.casl0.mediauploader
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -13,6 +14,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
+import androidx.core.os.bundleOf
 import io.github.casl0.mediauploader.service.IMediaMonitor
 import io.github.casl0.mediauploader.service.MediaContentObserverService
 import io.github.casl0.mediauploader.ui.MediaUploaderApp
@@ -24,8 +26,11 @@ import kotlinx.coroutines.flow.update
 
 class MainActivity : ComponentActivity() {
     companion object {
-        /** メディアパーミッション要求コード */
-        const val MEDIA_PERMISSION_REQUEST_CODE = 1000
+        /** パーミッション要求コード */
+        enum class RequestCode(val rawValue: Int) {
+            MediaPermission(1000),
+            NotificationPermission(1001),
+        }
     }
 
     private var mediaMonitorService: IMediaMonitor? = null
@@ -53,7 +58,8 @@ class MainActivity : ComponentActivity() {
                             mediaMonitorService?.stop()
                         }
                         _uiState.update { it.copy(observeEnabled = enabled) }
-                    }
+                    },
+                    openNotificationSetting = this::askNotificationPermissions
                 )
             }
         }
@@ -70,13 +76,23 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            MEDIA_PERMISSION_REQUEST_CODE -> {
+            RequestCode.MediaPermission.rawValue        -> {
                 if (
                     grantResults.any {
                         it == PackageManager.PERMISSION_DENIED
                     }
                 ) {
                     Log.d(TAG, "メディアパーミッションが拒否されました。")
+                }
+            }
+
+            RequestCode.NotificationPermission.rawValue -> {
+                if (
+                    grantResults.any {
+                        it == PackageManager.PERMISSION_DENIED
+                    }
+                ) {
+                    Log.d(TAG, "通知パーミッションが拒否されました。")
                 }
             }
         }
@@ -109,17 +125,18 @@ class MainActivity : ComponentActivity() {
     private fun askMediaPermissions() {
         val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(
-                android.Manifest.permission.READ_MEDIA_IMAGES,
-                android.Manifest.permission.READ_MEDIA_VIDEO,
-                android.Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO,
             )
         } else {
             listOf(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
             )
         }
         askPermissions(
-            permissions, MEDIA_PERMISSION_REQUEST_CODE
+            permissions,
+            RequestCode.MediaPermission.rawValue,
         ) {
             _uiState.update {
                 it.copy(
@@ -144,6 +161,44 @@ class MainActivity : ComponentActivity() {
         }.also {
             startActivity(it)
         }
+    }
+
+    /** 通知のパーミッションを要求します。 */
+    private fun askNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (
+                askPermissions(
+                    listOf(Manifest.permission.POST_NOTIFICATIONS),
+                    RequestCode.NotificationPermission.rawValue,
+                    this::goToNotificationSetting
+                )
+            ) {
+                goToNotificationSetting()
+            }
+        } else {
+            goToNotificationSetting()
+        }
+    }
+
+    /** 通知の設定画面に遷移します。 */
+    private fun goToNotificationSetting() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent().apply {
+                action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                putExtras(bundleOf(Settings.EXTRA_APP_PACKAGE to packageName))
+            }
+        } else {
+            Intent().apply {
+                action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                putExtras(
+                    bundleOf(
+                        "app_package" to packageName,
+                        "app_uid" to applicationInfo.uid,
+                    )
+                )
+            }
+        }
+        startActivity(intent)
     }
     //endregion
 }
