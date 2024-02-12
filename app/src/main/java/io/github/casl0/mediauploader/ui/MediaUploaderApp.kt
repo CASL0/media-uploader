@@ -50,6 +50,7 @@ internal fun MediaUploaderApp(
     uiState: StateFlow<CommonUiState>,
     onClickRationaleAction: () -> Unit,
     switchObserve: (Boolean) -> Unit,
+    openNotificationSetting: () -> Unit,
     navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
@@ -105,7 +106,12 @@ internal fun MediaUploaderApp(
                 Text(text = "Home")
             }
             composable(route = MediaUploaderRoute.Settings.name) {
-                SettingsScreen(commonUiState.observeEnabled, switchObserve, onClickRationaleAction)
+                SettingsScreen(
+                    commonUiState.observeEnabled,
+                    onCheckedChange = switchObserve,
+                    onClickMediaPermission = onClickRationaleAction,
+                    onClickNotificationPermission = openNotificationSetting
+                )
             }
         }
     }
