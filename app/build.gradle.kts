@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.bundles.androidx.room)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
+    testImplementation(libs.hamcrest.all)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.compose.ui.tooling)
