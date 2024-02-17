@@ -1,6 +1,5 @@
 package io.github.casl0.mediauploader.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -83,7 +82,7 @@ internal fun MediaUploaderApp(
     Scaffold(
         topBar = {
             MediaUploaderAppBar(
-                title = currentScreen.title,
+                currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() },
                 navigateTo = { route ->
@@ -120,7 +119,7 @@ internal fun MediaUploaderApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MediaUploaderAppBar(
-    @StringRes title: Int,
+    currentScreen: MediaUploaderRoute,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     navigateTo: (String) -> Unit,
@@ -130,7 +129,7 @@ private fun MediaUploaderAppBar(
         mutableStateOf(false)
     }
     TopAppBar(
-        title = { Text(stringResource(title)) },
+        title = { Text(stringResource(currentScreen.title)) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
@@ -146,24 +145,26 @@ private fun MediaUploaderAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { menuExpanded = !menuExpanded }) {
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Show more"
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text(text = stringResource(R.string.more_actions_settings)) },
-                    onClick = {
-                        menuExpanded = false
-                        navigateTo(MediaUploaderRoute.Settings.name)
-                    },
-                    modifier = Modifier.width(150.dp)
-                )
+            if (currentScreen.showAction) {
+                IconButton(onClick = { menuExpanded = !menuExpanded }) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "Show more"
+                    )
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(text = stringResource(R.string.more_actions_settings)) },
+                        onClick = {
+                            menuExpanded = false
+                            navigateTo(MediaUploaderRoute.Settings.name)
+                        },
+                        modifier = Modifier.width(150.dp)
+                    )
+                }
             }
         },
     )
@@ -174,7 +175,7 @@ private fun MediaUploaderAppBar(
 private fun MediaUploaderAppBarPreview() {
     MaterialTheme {
         MediaUploaderAppBar(
-            title = R.string.home_title,
+            currentScreen = MediaUploaderRoute.Home,
             canNavigateBack = true,
             navigateUp = {},
             navigateTo = {},
