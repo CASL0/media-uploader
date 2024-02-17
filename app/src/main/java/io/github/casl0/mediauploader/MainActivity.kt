@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Parcelable
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -23,6 +24,7 @@ import io.github.casl0.mediauploader.utils.askPermissions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.parcelize.Parcelize
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -65,6 +67,23 @@ class MainActivity : ComponentActivity() {
         }
         bindService()
         askMediaPermissions()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(ARG_UI_STATE, uiState.value)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val savedUiState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            savedInstanceState.getParcelable(ARG_UI_STATE, CommonUiState::class.java)
+        } else {
+            savedInstanceState.getParcelable(ARG_UI_STATE)
+        }
+        if (savedUiState != null) {
+            _uiState.update { savedUiState }
+        }
     }
     //endregion
 
@@ -110,6 +129,9 @@ class MainActivity : ComponentActivity() {
                         Log.d(TAG, "onServiceConnected, ${name.toString()}")
                         val binder = service as MediaContentObserverService.MediaContentObserverBinder
                         mediaMonitorService = binder.service
+                        if (uiState.value.observeEnabled) {
+                            mediaMonitorService?.start()
+                        }
                     }
 
                     override fun onServiceDisconnected(name: ComponentName?) {
@@ -205,6 +227,9 @@ class MainActivity : ComponentActivity() {
 
 private const val TAG = "MainActivity"
 
+/** UI状態のSaved Stateのキー */
+private const val ARG_UI_STATE = "ui_state"
+
 /**
  * 共通のUI状態
  *
@@ -213,9 +238,10 @@ private const val TAG = "MainActivity"
  * @property snackbarActionLabel スナックバーのアクションラベル
  * @property observeEnabled 監視の有効・無効
  */
+@Parcelize
 internal data class CommonUiState(
     val showSnackbar: Boolean = false,
     @StringRes val snackbarMessage: Int = 0,
     @StringRes val snackbarActionLabel: Int = 0,
     val observeEnabled: Boolean = false,
-)
+) : Parcelable
