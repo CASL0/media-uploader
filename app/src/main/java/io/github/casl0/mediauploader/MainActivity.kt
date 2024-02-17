@@ -43,6 +43,21 @@ class MainActivity : ComponentActivity() {
     /** UI状態 */
     private val uiState: StateFlow<CommonUiState> = _uiState
 
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Log.d(TAG, "onServiceConnected, ${name.toString()}")
+            val binder = service as MediaContentObserverService.MediaContentObserverBinder
+            mediaMonitorService = binder.service
+            if (uiState.value.observeEnabled) {
+                mediaMonitorService?.start()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            Log.d(TAG, "onServiceDisconnected, ${name.toString()}")
+        }
+    }
+
 
     //region android.app.Activity
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +82,11 @@ class MainActivity : ComponentActivity() {
         }
         bindService()
         askMediaPermissions()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -124,20 +144,7 @@ class MainActivity : ComponentActivity() {
         Intent(this, MediaContentObserverService::class.java).also {
             bindService(
                 it,
-                object : ServiceConnection {
-                    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                        Log.d(TAG, "onServiceConnected, ${name.toString()}")
-                        val binder = service as MediaContentObserverService.MediaContentObserverBinder
-                        mediaMonitorService = binder.service
-                        if (uiState.value.observeEnabled) {
-                            mediaMonitorService?.start()
-                        }
-                    }
-
-                    override fun onServiceDisconnected(name: ComponentName?) {
-                        Log.d(TAG, "onServiceDisconnected, ${name.toString()}")
-                    }
-                },
+                serviceConnection,
                 BIND_AUTO_CREATE,
             )
         }
