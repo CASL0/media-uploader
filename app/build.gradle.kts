@@ -63,6 +63,7 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.bundles.androidx.room)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

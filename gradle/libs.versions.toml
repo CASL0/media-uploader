@@ -4,6 +4,7 @@ androidx-junit = "1.1.5"
 core-ktx = "1.12.0"
 compose-bom = "2024.02.00"
 junit = "4.13.2"
+kotlinx-datetime = "0.5.0"
 lifecycle-runtime-ktx = "2.7.0"
 navigation-compose = "2.7.7"
 room = "2.6.1"
@@ -25,6 +26,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 [bundles]
 androidx-compose = [
