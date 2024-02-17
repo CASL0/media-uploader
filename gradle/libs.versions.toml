@@ -4,6 +4,7 @@ androidx-junit = "1.1.5"
 core-ktx = "1.12.0"
 compose-bom = "2024.02.00"
 hamcrest-all = "1.3"
+hilt-android = "2.50"
 junit = "4.13.2"
 kotlinx-datetime = "0.5.0"
 lifecycle-runtime-ktx = "2.7.0"
@@ -32,6 +33,8 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 hamcrest-all = { module = "org.hamcrest:hamcrest-all", version.ref = "hamcrest-all" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-android" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt-android" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 

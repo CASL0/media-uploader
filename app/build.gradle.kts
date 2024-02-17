@@ -4,6 +4,8 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("androidx.room")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -64,6 +66,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.bundles.androidx.room)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest.all)
     androidTestImplementation(libs.androidx.junit)
