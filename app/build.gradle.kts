@@ -54,6 +54,17 @@ android {
     room {
         schemaDirectory("$projectDir/schemas")
     }
+    testOptions {
+        managedDevices {
+            localDevices {
+                create("pixel7api34") {
+                    device = "Pixel 7 Pro"
+                    apiLevel = 34
+                    systemImageSource = "aosp"
+                }
+            }
+        }
+    }
 }
 
 dependencies {
