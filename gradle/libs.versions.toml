@@ -4,6 +4,7 @@ androidx-junit = "1.1.5"
 core-ktx = "1.12.0"
 compose-bom = "2024.02.00"
 core-testing = "2.2.0"
+desugar_jdk_libs = "2.0.3"
 hamcrest-all = "1.3"
 hilt-android = "2.50"
 junit = "4.13.2"
@@ -34,6 +35,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 hamcrest-all = { module = "org.hamcrest:hamcrest-all", version.ref = "hamcrest-all" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-android" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt-android" }

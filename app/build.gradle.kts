@@ -78,4 +78,5 @@ dependencies {
     androidTestImplementation(libs.androidx.core.testing)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
