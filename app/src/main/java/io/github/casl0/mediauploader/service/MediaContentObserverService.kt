@@ -12,12 +12,22 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.casl0.mediauploader.R
+import io.github.casl0.mediauploader.models.DomainUpdateHistory
+import io.github.casl0.mediauploader.repository.UpdateHistoryRepository
 import io.github.casl0.mediauploader.utils.OBSERVER_SERVICE_CHANNEL_ID
 import io.github.casl0.mediauploader.utils.OBSERVER_SERVICE_CHANNEL_NAME
 import io.github.casl0.mediauploader.utils.makeNotificationChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import javax.inject.Inject
 
 /** [ContentObserver]を使ったメディアコンテンツの監視サービス */
+@AndroidEntryPoint
 class MediaContentObserverService(handler: Handler? = null) : Service(), IMediaMonitor {
     companion object {
         val IMAGES_URI: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -31,11 +41,28 @@ class MediaContentObserverService(handler: Handler? = null) : Service(), IMediaM
     /** メディアコンテンツ監視用インスタンス */
     private val observer = object : ContentObserver(handler) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
-            // TODO: implement
             super.onChange(selfChange, uri)
             Log.d(TAG, "onChange: $selfChange, $uri")
+
+            if (uri != null) {
+                coroutineScope.launch {
+                    updateHistoryRepository.saveHistory(
+                        DomainUpdateHistory(
+                            uri = uri,
+                            updatedAt = Clock.System.now(),
+                        )
+                    )
+                }
+            }
         }
     }
+
+    /** 更新履歴のデータ */
+    @Inject
+    lateinit var updateHistoryRepository: UpdateHistoryRepository
+
+    /** コルーチンスコープ */
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     //region Private Methods
     /**
@@ -86,6 +113,7 @@ class MediaContentObserverService(handler: Handler? = null) : Service(), IMediaM
     override fun onDestroy() {
         super.onDestroy()
         stop()
+        coroutineScope.cancel()
     }
 
     override fun onBind(intent: Intent): IBinder {
