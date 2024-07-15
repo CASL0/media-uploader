@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.coil.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest.all)
     testImplementation(libs.mockito.kotlin)
