@@ -1,5 +1,6 @@
 package io.github.casl0.mediauploader.ui
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -41,8 +42,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.casl0.mediauploader.CommonUiState
 import io.github.casl0.mediauploader.R
+import io.github.casl0.mediauploader.models.DomainUpdateHistory
+import io.github.casl0.mediauploader.ui.home.HomeScreen
 import io.github.casl0.mediauploader.ui.settings.SettingsScreen
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.datetime.Clock
 
 @Composable
 internal fun MediaUploaderApp(
@@ -101,8 +105,15 @@ internal fun MediaUploaderApp(
                 .padding(it)
         ) {
             composable(route = MediaUploaderRoute.Home.name) {
-                // TODO: implement
-                Text(text = "Home")
+                HomeScreen(
+                    // TODO: 更新履歴のモックではなく実データを渡すように修正
+                    listOf(
+                        DomainUpdateHistory(
+                            Uri.parse("content://media/external/images/media/1000000041"),
+                            Clock.System.now()
+                        )
+                    )
+                )
             }
             composable(route = MediaUploaderRoute.Settings.name) {
                 SettingsScreen(
