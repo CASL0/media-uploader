@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest.all)
     testImplementation(libs.mockito.kotlin)
