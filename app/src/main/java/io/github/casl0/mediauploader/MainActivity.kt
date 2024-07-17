@@ -16,6 +16,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.core.os.bundleOf
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.casl0.mediauploader.service.IMediaMonitor
 import io.github.casl0.mediauploader.service.MediaContentObserverService
 import io.github.casl0.mediauploader.ui.MediaUploaderApp
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     companion object {
         /** パーミッション要求コード */
