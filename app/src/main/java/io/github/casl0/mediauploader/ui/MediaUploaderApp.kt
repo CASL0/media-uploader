@@ -40,27 +40,46 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.github.casl0.mediauploader.CommonUiState
 import io.github.casl0.mediauploader.R
 import io.github.casl0.mediauploader.ui.home.HomeScreen
 import io.github.casl0.mediauploader.ui.settings.SettingsScreen
 import kotlinx.coroutines.flow.StateFlow
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun MediaUploaderApp(
     uiState: StateFlow<CommonUiState>,
     onClickRationaleAction: () -> Unit,
     switchObserve: (Boolean) -> Unit,
     openNotificationSetting: () -> Unit,
+    mediaPermissions: List<String>,
+    shouldShowRationale: () -> Unit,
+    permissionsRequested: () -> Unit,
     navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    val mediaPermissionsState = rememberMultiplePermissionsState(mediaPermissions)
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = MediaUploaderRoute.valueOf(
         backStackEntry?.destination?.route ?: MediaUploaderRoute.Home.name
     )
     val commonUiState by uiState.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(commonUiState.permissionsRequested) {
+        if (!commonUiState.permissionsRequested && !mediaPermissionsState.allPermissionsGranted) {
+            if (mediaPermissionsState.shouldShowRationale) {
+                shouldShowRationale()
+            } else {
+                permissionsRequested()
+                mediaPermissionsState.launchMultiplePermissionRequest()
+            }
+        }
+    }
+
     if (commonUiState.showSnackbar) {
         LaunchedEffect(snackbarHostState) {
             when (

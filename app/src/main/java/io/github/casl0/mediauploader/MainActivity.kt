@@ -32,9 +32,27 @@ class MainActivity : ComponentActivity() {
     companion object {
         /** パーミッション要求コード */
         enum class RequestCode(val rawValue: Int) {
-            MediaPermission(1000),
             NotificationPermission(1001),
         }
+    }
+
+    private val mediaPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        listOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
+        )
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        listOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO,
+        )
+    } else {
+        listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+        )
     }
 
     private var mediaMonitorService: IMediaMonitor? = null
@@ -78,12 +96,14 @@ class MainActivity : ComponentActivity() {
                         }
                         _uiState.update { it.copy(observeEnabled = enabled) }
                     },
-                    openNotificationSetting = this::askNotificationPermissions
+                    openNotificationSetting = this::askNotificationPermissions,
+                    mediaPermissions,
+                    this::shouldShowRationale,
+                    this::switchPermissionsRequested
                 )
             }
         }
         bindService()
-        askMediaPermissions()
     }
 
     override fun onDestroy() {
@@ -117,16 +137,6 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            RequestCode.MediaPermission.rawValue        -> {
-                if (
-                    grantResults.any {
-                        it == PackageManager.PERMISSION_DENIED
-                    }
-                ) {
-                    Log.d(TAG, "メディアパーミッションが拒否されました。")
-                }
-            }
-
             RequestCode.NotificationPermission.rawValue -> {
                 if (
                     grantResults.any {
@@ -149,40 +159,6 @@ class MainActivity : ComponentActivity() {
                 serviceConnection,
                 BIND_AUTO_CREATE,
             )
-        }
-    }
-
-    /** メディアパーミッションを要求します。 */
-    private fun askMediaPermissions() {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            listOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO,
-                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
-            )
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO,
-            )
-        } else {
-            listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        }
-        askPermissions(
-            permissions,
-            RequestCode.MediaPermission.rawValue,
-        ) {
-            _uiState.update {
-                it.copy(
-                    showSnackbar = true,
-                    snackbarMessage = R.string.media_permission_rationale,
-                    snackbarActionLabel = R.string.media_permission_rationale_label
-                )
-            }
         }
     }
 
@@ -238,6 +214,24 @@ class MainActivity : ComponentActivity() {
         }
         startActivity(intent)
     }
+
+    /** パーミッションが必要な旨を表示する */
+    private fun shouldShowRationale() {
+        _uiState.update {
+            it.copy(
+                showSnackbar = true,
+                snackbarMessage = R.string.media_permission_rationale,
+                snackbarActionLabel = R.string.media_permission_rationale_label
+            )
+        }
+    }
+
+    /** パーミッション要求済みフラグ切り替え */
+    private fun switchPermissionsRequested() {
+        _uiState.update {
+            it.copy(permissionsRequested = true)
+        }
+    }
     //endregion
 }
 
@@ -260,4 +254,5 @@ internal data class CommonUiState(
     @StringRes val snackbarMessage: Int = 0,
     @StringRes val snackbarActionLabel: Int = 0,
     val observeEnabled: Boolean = false,
+    val permissionsRequested: Boolean = false,
 ) : Parcelable
