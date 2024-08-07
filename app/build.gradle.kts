@@ -81,6 +81,7 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.coil.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.accompanist.permissions)
     testImplementation(libs.junit)
     testImplementation(libs.hamcrest.all)
     testImplementation(libs.mockito.kotlin)
