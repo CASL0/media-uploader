@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,7 +20,6 @@ import io.github.casl0.mediauploader.service.IMediaMonitor
 import io.github.casl0.mediauploader.service.MediaContentObserverService
 import io.github.casl0.mediauploader.ui.MediaUploaderApp
 import io.github.casl0.mediauploader.ui.theme.MediaUploaderTheme
-import io.github.casl0.mediauploader.utils.askPermissions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -29,13 +27,6 @@ import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    companion object {
-        /** パーミッション要求コード */
-        enum class RequestCode(val rawValue: Int) {
-            NotificationPermission(1001),
-        }
-    }
-
     private val mediaPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
         listOf(
             Manifest.permission.READ_MEDIA_IMAGES,
@@ -129,27 +120,6 @@ class MainActivity : ComponentActivity() {
     }
     //endregion
 
-    //region androidx.activity.ComponentActivity
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            RequestCode.NotificationPermission.rawValue -> {
-                if (
-                    grantResults.any {
-                        it == PackageManager.PERMISSION_DENIED
-                    }
-                ) {
-                    Log.d(TAG, "通知パーミッションが拒否されました。")
-                }
-            }
-        }
-    }
-    //endregion
-
     //region Private Methods
     /** ファイル監視サービスをバインドします */
     private fun bindService() {
@@ -174,23 +144,6 @@ class MainActivity : ComponentActivity() {
             data = Uri.parse("package:${packageName}")
         }.also {
             startActivity(it)
-        }
-    }
-
-    /** 通知のパーミッションを要求します。 */
-    private fun askNotificationPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (
-                askPermissions(
-                    listOf(Manifest.permission.POST_NOTIFICATIONS),
-                    RequestCode.NotificationPermission.rawValue,
-                    this::goToNotificationSetting
-                )
-            ) {
-                goToNotificationSetting()
-            }
-        } else {
-            goToNotificationSetting()
         }
     }
 
