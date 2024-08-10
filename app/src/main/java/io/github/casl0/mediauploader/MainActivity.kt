@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
                         }
                         _uiState.update { it.copy(observeEnabled = enabled) }
                     },
-                    openNotificationSetting = this::askNotificationPermissions,
+                    openNotificationSetting = this::goToNotificationSetting,
                     mediaPermissions,
                     this::shouldShowRationale,
                     this::switchPermissionsRequested

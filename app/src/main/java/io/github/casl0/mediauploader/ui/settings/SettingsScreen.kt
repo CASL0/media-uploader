@@ -1,5 +1,7 @@
 package io.github.casl0.mediauploader.ui.settings
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import io.github.casl0.mediauploader.R
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun SettingsScreen(
     observeEnabled: Boolean,
@@ -25,6 +32,12 @@ internal fun SettingsScreen(
     onClickNotificationPermission: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val notificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -44,7 +57,15 @@ internal fun SettingsScreen(
             )
         }
         TextButton(
-            onClick = onClickNotificationPermission,
+            onClick = {
+                if (notificationPermission == null || notificationPermission.status.isGranted) {
+                    onClickNotificationPermission()
+                } else if (notificationPermission.status.shouldShowRationale) {
+                    onClickNotificationPermission()
+                } else {
+                    notificationPermission.launchPermissionRequest()
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
